@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenity Spa & Massage | Book Your Relaxation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f6f3;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2c5f2d 0%, #97bc62 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 60px;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://kimi-web-img.moonshot.cn/img/facesspa.com/c2736ee218a9cb8e648b47d869c76e151f68b422.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #97bc62;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #7a9c4a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #2c5f2d;
+        }
+
+        .btn-secondary:hover {
+            background: #1e4220;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Services Preview */
+        .services {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c5f2d;
+            margin-bottom: 3rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: #f8f6f3;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .service-info {
+            padding: 1.5rem;
+        }
+
+        .service-info h3 {
+            color: #2c5f2d;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            color: #97bc62;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Booking Section */
+        .booking-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f8f6f3 0%, #e8f5e9 100%);
+        }
+
+        .booking-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c5f2d;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #97bc62;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Payment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .payment-option {
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: #97bc62;
+            background: #f8f6f3;
+        }
+
+        .payment-option.selected {
+            border-color: #2c5f2d;
+            background: #e8f5e9;
+        }
+
+        .payment-option img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .payment-option h3 {
+            color: #2c5f2d;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Credit Card Form */
+        .credit-card-form {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f8f6f3;
+            border-radius: 10px;
+        }
+
+        .bitcoin-info {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #fff3e0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .bitcoin-address {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 1rem 0;
+            word-break: break-all;
+            border: 2px dashed #97bc62;
+        }
+
+        /* Error Page */
+        .error-page {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        .error-page h2 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        /* Success Page */
+        .success-page {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #27ae60;
+            margin-bottom: 1rem;
+        }
+
+        .success-page h2 {
+            color: #27ae60;
+            margin-bottom: 1rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #97bc62;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: #2c5f2d;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">🌿 Serenity Spa</div>
+            <div>
+                <a href="#book" class="btn" style="padding: 8px 20px; font-size: 0.9rem;">Book Now</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Inner Peace</h1>
+            <p>Luxury massage and spa treatments tailored to your needs</p>
+            <a href="#book" class="btn">Schedule Your Appointment</a>
+        </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="services">
+        <div class="container">
+            <h2 class="section-title">Our Signature Treatments</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="https://kimi-web-img.moonshot.cn/img/www.cortiva.edu/873e4e35f59f51639db7847f96a94c3dea0f58f9.webp" alt="Hot Stone Massage">
+                    <div class="service-info">
+                        <h3>Hot Stone Therapy</h3>
+                        <p>Heated basalt stones melt away tension and improve circulation for deep relaxation.</p>
+                        <div class="price">$120 / 90 mins</div>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="https://kimi-web-img.moonshot.cn/img/purespadirect.com/fa1fd5a05e5347ed4928d6eb150ee059446022e2.jpg" alt="Luxury Spa Room">
+                    <div class="service-info">
+                        <h3>Swedish Relaxation</h3>
+                        <p>Classic full-body massage using long, flowing strokes to ease muscle tension.</p>
+                        <div class="price">$85 / 60 mins</div>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="https://kimi-web-img.moonshot.cn/img/www.virginlimitededition.com/da6536f88dd76c7d3a7bce8dd7120f4e56da23b8.jpg" alt="Couples Massage">
+                    <div class="service-info">
+                        <h3>Couples Retreat</h3>
+                        <p>Side-by-side massage experience perfect for partners or friends.</p>
+                        <div class="price">$200 / 90 mins</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="booking-section" id="book">
+        <div class="container">
+            <h2 class="section-title">Book Your Appointment</h2>
+            
+            <form class="booking-form" id="bookingForm" action="https://formsubmit.co/YOUR_EMAIL@example.com" method="POST">
+                <!-- FormSubmit Configuration -->
+                <input type="hidden" name="_subject" value="New Spa Booking Request!">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="javascript:void(0);">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="First_Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="Last_Name" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="Phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="service">Select Service *</label>
+                        <select id="service" name="Service" required>
+                            <option value="">Choose a treatment...</option>
+                            <option value="Hot Stone Therapy - $120">Hot Stone Therapy ($120)</option>
+                            <option value="Swedish Relaxation - $85">Swedish Relaxation ($85)</option>
+                            <option value="Deep Tissue - $100">Deep Tissue Massage ($100)</option>
+                            <option value="Couples Retreat - $200">Couples Retreat ($200)</option>
+                            <option value="Aromatherapy - $95">Aromatherapy Massage ($95)</option>
+                            <option value="Facial Treatment - $75">Luxury Facial ($75)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="therapist">Preferred Therapist (Optional)</label>
+                        <select id="therapist" name="Therapist">
+                            <option value="">No preference</option>
+                            <option value="Sarah">Sarah - Senior Therapist</option>
+                            <option value="Michael">Michael - Sports Specialist</option>
+                            <option value="Emma">Emma - Wellness Expert</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Preferred Date *</label>
+                        <input type="date" id="date" name="Date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Preferred Time *</label>
+                        <select id="time" name="Time" required>
+                            <option value="">Select time...</option>
+                            <option value="9:00 AM">9:00 AM</option>
+                            <option value="10:30 AM">10:30 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="1:30 PM">1:30 PM</option>
+                            <option value="3:00 PM">3:00 PM</option>
+                            <option value="4:30 PM">4:30 PM</option>
+                            <option value="6:00 PM">6:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Special Requests or Health Concerns</label>
+                    <textarea id="notes" name="Notes" rows="3" placeholder="Any allergies, injuries, or preferences we should know about?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Booking Fee: <strong style="color: #2c5f2d; font-size: 1.2rem;">$25.00</strong> (Required to secure appointment)</label>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">This fee will be deducted from your total treatment cost.</p>
+                </div>
+
+                <button type="button" class="btn btn-secondary" style="width: 100%; padding: 16px;" onclick="openPaymentModal()">
+                    Proceed to Payment
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePaymentModal()">&times;</span>
+            
+            <!-- Payment Selection -->
+            <div id="paymentSelection">
+                <h2 style="text-align: center; color: #2c5f2d; margin-bottom: 0.5rem;">Select Payment Method</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 2rem;">Booking Fee: $25.00</p>
+                
+                <div class="payment-options">
+                    <div class="payment-option" onclick="selectPayment('bitcoin')">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">₿</div>
+                        <h3>Bitcoin</h3>
+                        <p>Pay with cryptocurrency</p>
+                        <small>Fast & Secure</small>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('creditcard')">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
+                        <h3>Credit Card</h3>
+                        <p>Visa, Mastercard, Amex</p>
+                        <small>Traditional Payment</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bitcoin Payment -->
+            <div id="bitcoinSection" class="bitcoin-info">
+                <h3 style="color: #f7931a; margin-bottom: 1rem;">Bitcoin Payment</h3>
+                <p>Please send exactly <strong>0.00065 BTC</strong> ($25.00) to the address below:</p>
+                <div class="bitcoin-address">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Scan QR code or copy address manually</p>
+                <div style="background: white; padding: 1rem; display: inline-block; border-radius: 10px; margin-bottom: 1rem;">
+                    <div style="width: 150px; height: 150px; background: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #000 75%), linear-gradient(-45deg, transparent 75%, #000 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">QR CODE</div>
+                </div>
+                <p style="font-size: 0.8rem; color: #999;">Waiting for payment confirmation...</p>
+                <div class="spinner" id="bitcoinSpinner" style="display: block;"></div>
+                <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="completeBitcoinPayment()">I've Completed the Payment</button>
+            </div>
+
+            <!-- Credit Card Form -->
+            <div id="creditCardSection" class="credit-card-form">
+                <h3 style="color: #2c5f2d; margin-bottom: 1.5rem;">Credit Card Details</h3>
+                <div class="form-group">
+                    <label>Card Number *</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expiry Date *</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV *</label>
+                        <input type="text" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Cardholder Name *</label>
+                    <input type="text" placeholder="John Doe">
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="processCreditCard()">Pay $25.00</button>
+            </div>
+
+            <!-- Error Page (Credit Card) -->
+            <div id="errorPage" class="error-page">
+                <div class="error-icon">❌</div>
+                <h2>Payment Failed</h2>
+                <p style="margin-bottom: 1rem; color: #666;">We apologize, but your credit card transaction could not be processed at this time.</p>
+                <p style="margin-bottom: 2rem; color: #666; font-size: 0.9rem;">Error: Transaction declined by issuing bank. Please try a different payment method or contact your bank.</p>
+                <button class="btn" onclick="resetPayment()">Try Bitcoin Instead</button>
+                <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="closePaymentModal()">Cancel Booking</button>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successPage" class="success-page">
+                <div class="success-icon">✓</div>
+                <h2>Booking Confirmed!</h2>
+                <p style="margin-bottom: 1rem; color: #666;">Your appointment has been successfully booked.</p>
+                <p style="margin-bottom: 2rem; color: #666; font-size: 0.9rem;">A confirmation email has been sent to your email address.</p>
+                <div class="spinner" id="submitSpinner"></div>
+                <p style="font-size: 0.8rem; color: #999;">Redirecting...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Serenity Spa & Massage. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">123 Relaxation Avenue, Wellness District</p>
+    </footer>
+
+    <script>
+        // Set minimum date to today
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+        let selectedPaymentMethod = null;
+
+        function openPaymentModal() {
+            // Validate form first
+            const form = document.getElementById('bookingForm');
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = '#e74c3c';
+                } else {
+                    field.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill in all required fields before proceeding to payment.');
+                return;
+            }
+
+            document.getElementById('paymentModal').style.display = 'flex';
+            resetPaymentView();
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function resetPaymentView() {
+            document.getElementById('paymentSelection').style.display = 'block';
+            document.getElementById('bitcoinSection').style.display = 'none';
+            document.getElementById('creditCardSection').style.display = 'none';
+            document.getElementById('errorPage').style.display = 'none';
+            document.getElementById('successPage').style.display = 'none';
+            
+            // Remove selected class from payment options
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            
+            // Visual feedback
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Show appropriate section after brief delay
+            setTimeout(() => {
+                document.getElementById('paymentSelection').style.display = 'none';
+                
+                if (method === 'bitcoin') {
+                    document.getElementById('bitcoinSection').style.display = 'block';
+                    simulateBitcoinProcessing();
+                } else if (method === 'creditcard') {
+                    document.getElementById('creditCardSection').style.display = 'block';
+                }
+            }, 300);
+        }
+
+        function simulateBitcoinProcessing() {
+            // Simulate waiting for blockchain confirmation
+            console.log('Waiting for Bitcoin payment...');
+        }
+
+        function completeBitcoinPayment() {
+            document.getElementById('bitcoinSection').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+            
+            // Simulate processing then submit form
+            setTimeout(() => {
+                document.getElementById('submitSpinner').style.display = 'block';
+                
+                setTimeout(() => {
+                    // Submit the form to FormSubmit
+                    document.getElementById('bookingForm').submit();
+                }, 2000);
+            }, 1000);
+        }
+
+        function processCreditCard() {
+            // Validate credit card fields
+            const inputs = document.querySelectorAll('#creditCardSection input');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill in all card details.');
+                return;
+            }
+
+            // Show processing spinner or message
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            // Simulate processing delay then show error
+            setTimeout(() => {
+                document.getElementById('creditCardSection').style.display = 'none';
+                document.getElementById('errorPage').style.display = 'block';
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        function resetPayment() {
+            resetPaymentView();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target == modal) {
+                closePaymentModal();
+            }
+        }
+
+        // Input formatting for credit card
+        document.querySelector('input[placeholder="1234 5678 9012 3456"]')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        document.querySelector('input[placeholder="MM/YY"]')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    </script>
+
+</body>
+</html>
