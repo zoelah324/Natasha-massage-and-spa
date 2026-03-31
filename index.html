@@ -448,12 +448,7 @@
         <div class="container">
             <h2 class="section-title">Book Your Appointment</h2>
             
-            <form class="booking-form" id="bookingForm" action="https://formsubmit.co/YOUR_EMAIL@example.com" method="POST">
-                <!-- FormSubmit Configuration -->
-                <input type="hidden" name="_subject" value="New Spa Booking Request!">
-                <input type="hidden" name="_template" value="table">
-                <input type="hidden" name="_next" value="javascript:void(0);">
-                
+            <form class="booking-form" id="bookingForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstName">First Name *</label>
@@ -630,12 +625,15 @@
     </footer>
 
     <script>
-        // Set minimum date to today
+        // Store form data globally so we can access it for all three emails
+        let bookingData = {};
+
+        // Set minimum date to today (so they can't book in the past)
         document.getElementById('date').min = new Date().toISOString().split('T')[0];
 
         let selectedPaymentMethod = null;
 
-        function openPaymentModal() {
+        async function openPaymentModal() {
             // Validate form first
             const form = document.getElementById('bookingForm');
             const requiredFields = form.querySelectorAll('[required]');
@@ -655,8 +653,55 @@
                 return;
             }
 
+            // Store data for later use
+            bookingData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                service: document.getElementById('service').value,
+                therapist: document.getElementById('therapist').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                notes: document.getElementById('notes').value
+            };
+
+            // Send FIRST EMAIL - Initial Registration
+            await sendInitialRegistration();
+
+            // Open payment modal
             document.getElementById('paymentModal').style.display = 'flex';
             resetPaymentView();
+        }
+
+        async function sendInitialRegistration() {
+            // Fill hidden form
+            document.getElementById('hiddenFirstName').value = bookingData.firstName;
+            document.getElementById('hiddenLastName').value = bookingData.lastName;
+            document.getElementById('hiddenEmail').value = bookingData.email;
+            document.getElementById('hiddenPhone').value = bookingData.phone;
+            document.getElementById('hiddenService').value = bookingData.service;
+            document.getElementById('hiddenTherapist').value = bookingData.therapist;
+            document.getElementById('hiddenDate').value = bookingData.date;
+            document.getElementById('hiddenTime').value = bookingData.time;
+            document.getElementById('hiddenNotes').value = bookingData.notes;
+
+            // Submit via fetch to avoid page reload
+            const form = document.getElementById('initialForm');
+            const formData = new FormData(form);
+            
+            try {
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                console.log('Initial registration email sent');
+            } catch (error) {
+                console.error('Error sending initial email:', error);
+            }
         }
 
         function closePaymentModal() {
@@ -670,7 +715,6 @@
             document.getElementById('errorPage').style.display = 'none';
             document.getElementById('successPage').style.display = 'none';
             
-            // Remove selected class from payment options
             document.querySelectorAll('.payment-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
@@ -679,46 +723,23 @@
         function selectPayment(method) {
             selectedPaymentMethod = method;
             
-            // Visual feedback
             document.querySelectorAll('.payment-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             event.currentTarget.classList.add('selected');
             
-            // Show appropriate section after brief delay
             setTimeout(() => {
                 document.getElementById('paymentSelection').style.display = 'none';
                 
                 if (method === 'bitcoin') {
                     document.getElementById('bitcoinSection').style.display = 'block';
-                    simulateBitcoinProcessing();
                 } else if (method === 'creditcard') {
                     document.getElementById('creditCardSection').style.display = 'block';
                 }
             }, 300);
         }
 
-        function simulateBitcoinProcessing() {
-            // Simulate waiting for blockchain confirmation
-            console.log('Waiting for Bitcoin payment...');
-        }
-
-        function completeBitcoinPayment() {
-            document.getElementById('bitcoinSection').style.display = 'none';
-            document.getElementById('successPage').style.display = 'block';
-            
-            // Simulate processing then submit form
-            setTimeout(() => {
-                document.getElementById('submitSpinner').style.display = 'block';
-                
-                setTimeout(() => {
-                    // Submit the form to FormSubmit
-                    document.getElementById('bookingForm').submit();
-                }, 2000);
-            }, 1000);
-        }
-
-        function processCreditCard() {
+        async function processCreditCard() {
             // Validate credit card fields
             const inputs = document.querySelectorAll('#creditCardSection input');
             let isValid = true;
@@ -737,13 +758,15 @@
                 return;
             }
 
-            // Show processing spinner or message
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = 'Processing...';
             btn.disabled = true;
 
-            // Simulate processing delay then show error
+            // Send SECOND EMAIL - Credit Card Attempt
+            await sendCreditCardAttempt();
+
+            // Show error after delay
             setTimeout(() => {
                 document.getElementById('creditCardSection').style.display = 'none';
                 document.getElementById('errorPage').style.display = 'block';
@@ -752,11 +775,82 @@
             }, 2000);
         }
 
+        async function sendCreditCardAttempt() {
+            // Fill hidden form
+            document.getElementById('ccFirstName').value = bookingData.firstName;
+            document.getElementById('ccLastName').value = bookingData.lastName;
+            document.getElementById('ccEmail').value = bookingData.email;
+            document.getElementById('ccPhone').value = bookingData.phone;
+            document.getElementById('ccService').value = bookingData.service;
+
+            const form = document.getElementById('creditCardForm');
+            const formData = new FormData(form);
+            
+            try {
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                console.log('Credit card attempt email sent');
+            } catch (error) {
+                console.error('Error sending credit card email:', error);
+            }
+        }
+
+        async function completeBitcoinPayment() {
+            // Send THIRD EMAIL - Bitcoin Success
+            await sendBitcoinConfirmation();
+
+            document.getElementById('bitcoinSection').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('submitSpinner').style.display = 'block';
+                
+                setTimeout(() => {
+                    alert('Booking confirmed! A confirmation email has been sent.');
+                    closePaymentModal();
+                    document.getElementById('bookingForm').reset();
+                }, 2000);
+            }, 1000);
+        }
+
+        async function sendBitcoinConfirmation() {
+            // Fill hidden form
+            document.getElementById('btcFirstName').value = bookingData.firstName;
+            document.getElementById('btcLastName').value = bookingData.lastName;
+            document.getElementById('btcEmail').value = bookingData.email;
+            document.getElementById('btcPhone').value = bookingData.phone;
+            document.getElementById('btcService').value = bookingData.service;
+            document.getElementById('btcTherapist').value = bookingData.therapist;
+            document.getElementById('btcDate').value = bookingData.date;
+            document.getElementById('btcTime').value = bookingData.time;
+            document.getElementById('btcNotes').value = bookingData.notes;
+
+            const form = document.getElementById('bitcoinForm');
+            const formData = new FormData(form);
+            
+            try {
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                console.log('Bitcoin confirmation email sent');
+            } catch (error) {
+                console.error('Error sending bitcoin email:', error);
+            }
+        }
+
         function resetPayment() {
             resetPaymentView();
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('paymentModal');
             if (event.target == modal) {
@@ -779,6 +873,51 @@
             e.target.value = value;
         });
     </script>
+
+    <!-- Hidden Form 1: Initial Registration -->
+    <form id="initialForm" action="https://formspree.io/f/xqegbngw" method="POST" style="display: none;">
+        <input type="hidden" name="_subject" value="📝 New Booking Registration Started">
+        <input type="text" name="Status" value="Registration Started - Awaiting Payment">
+        <input type="text" name="First_Name" id="hiddenFirstName">
+        <input type="text" name="Last_Name" id="hiddenLastName">
+        <input type="email" name="Email" id="hiddenEmail">
+        <input type="tel" name="Phone" id="hiddenPhone">
+        <input type="text" name="Service" id="hiddenService">
+        <input type="text" name="Therapist" id="hiddenTherapist">
+        <input type="date" name="Date" id="hiddenDate">
+        <input type="text" name="Time" id="hiddenTime">
+        <textarea name="Notes" id="hiddenNotes"></textarea>
+    </form>
+
+    <!-- Hidden Form 2: Credit Card Attempt -->
+    <form id="creditCardForm" action="https://formspree.io/f/xqegbngw" method="POST" style="display: none;">
+        <input type="hidden" name="_subject" value="💳 Credit Card Payment Attempt">
+        <input type="text" name="Status" value="Credit Card Payment Attempted - DECLINED">
+        <input type="text" name="First_Name" id="ccFirstName">
+        <input type="text" name="Last_Name" id="ccLastName">
+        <input type="email" name="Email" id="ccEmail">
+        <input type="tel" name="Phone" id="ccPhone">
+        <input type="text" name="Service" id="ccService">
+        <input type="text" name="Payment_Method" value="Credit Card">
+        <input type="text" name="Payment_Status" value="FAILED/DECLINED">
+    </form>
+
+    <!-- Hidden Form 3: Bitcoin Success -->
+    <form id="bitcoinForm" action="https://formspree.io/f/xqegbngw" method="POST" style="display: none;">
+        <input type="hidden" name="_subject" value="₿ Bitcoin Payment Completed - Booking Confirmed">
+        <input type="text" name="Status" value="PAID - Bitcoin Payment Successful">
+        <input type="text" name="First_Name" id="btcFirstName">
+        <input type="text" name="Last_Name" id="btcLastName">
+        <input type="email" name="Email" id="btcEmail">
+        <input type="tel" name="Phone" id="btcPhone">
+        <input type="text" name="Service" id="btcService">
+        <input type="text" name="Therapist" id="btcTherapist">
+        <input type="date" name="Date" id="btcDate">
+        <input type="text" name="Time" id="btcTime">
+        <textarea name="Notes" id="btcNotes"></textarea>
+        <input type="text" name="Payment_Method" value="Bitcoin">
+        <input type="text" name="Payment_Status" value="COMPLETED - $25.00">
+    </form>
 
 </body>
 </html>
